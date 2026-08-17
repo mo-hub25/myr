@@ -7,7 +7,7 @@
     <style>
         /* ===== ROOT & THEMING & VARIABLES ===== */
         :root {
-            /* الحجم مثبت عند 50% (يمكنك تغيير هذا الرقم يدوياً في الكود) */
+            /* القيمة الافتراضية */
             --ui-scale: 0.6; 
             
             --bg-primary: #0b0b14;
@@ -23,6 +23,20 @@
             --slider-fill: #ff7b00;
             --knob-color: #ff7b00;
             --icon-fill: #f0f0ff;
+        }
+
+        /* ===== متغير الحجم للوضع العمودي (Portrait) ===== */
+        @media (orientation: portrait) {
+            :root {
+                --ui-scale: 0.7; /* 70% - حجم أكبر ليناسب الشاشة الطويلة */
+            }
+        }
+
+        /* ===== متغير الحجم للوضع الأفقي (Landscape) ===== */
+        @media (orientation: landscape) {
+            :root {
+                --ui-scale: 0.5; /* 50% - الحجم المثالي الذي أعجبك */
+            }
         }
 
         body.light-mode {
@@ -95,7 +109,7 @@
             box-shadow: var(--shadow); 
             animation: cardEntry 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards; 
             opacity: 0; 
-            transform: scale(var(--ui-scale)); /* يتم تطبيق الحجم المصغر هنا */
+            transform: scale(var(--ui-scale)); /* يتم تطبيق الحجم هنا حسب الوضعية */
             transform-origin: center center;
         }
         @keyframes cardEntry { to { opacity: 1; transform: scale(var(--ui-scale)); } }
@@ -323,7 +337,7 @@
             let captionsEnabled = false;
 
             // ===================================================================
-            //  اللغات (تمت إزالة شريط التمرير)
+            //  اللغات
             // ===================================================================
             const i18n = {
                 "en": { "settings": "⚙️ Hyper-Controls", "lang": "🌐 Language", "theme": "🌗 Theme", "sync": "🎨 Color Sync", "captions": "📜 Captions", "scale": "📐 Display Scale", "speed": "⏩ Speed", "error_head": "Failed to load video.", "error_sub": "Please ensure <strong>video.mp4</strong> is in the same folder." },
@@ -665,7 +679,7 @@
                 setTimeout(() => controlsOverlay.classList.remove('active-controls'), 4000);
             });
 
-            console.log('✅ NATIVE VIDEO ENGINE LOADED - SIZE FIXED AT 50%');
+            console.log('✅ NATIVE VIDEO ENGINE LOADED - LANDSCAPE/PORTRAIT SCALING ADDED');
         })();
     </script>
 </body>
