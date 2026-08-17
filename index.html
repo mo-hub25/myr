@@ -5,8 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>practical surgery</title>
     <style>
-        /* ===== ROOT & THEMING ===== */
+        /* ===== ROOT & THEMING & VARIABLES ===== */
         :root {
+            /* الحجم مثبت عند 50% (يمكنك تغيير هذا الرقم يدوياً في الكود) */
+            --ui-scale: 0.5; 
+            
             --bg-primary: #0b0b14;
             --bg-secondary: #16162e;
             --text-primary: #f0f0ff;
@@ -45,7 +48,7 @@
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            padding: 8px; 
+            padding: 16px; 
             position: relative; 
             overflow-x: hidden; 
             transition: background 0.4s ease, color 0.3s ease; 
@@ -78,8 +81,24 @@
         }
 
         /* ===== MAIN CARD ===== */
-        .glass-card { position: relative; z-index: 1; background: var(--card-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--card-border); border-radius: 40px; padding: 24px; max-width: 960px; width: 100%; box-shadow: var(--shadow); animation: cardEntry 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards; opacity: 0; transform: translateY(40px); }
-        @keyframes cardEntry { to { opacity: 1; transform: translateY(0); } }
+        .glass-card { 
+            position: relative; 
+            z-index: 1; 
+            background: var(--card-bg); 
+            backdrop-filter: blur(24px); 
+            -webkit-backdrop-filter: blur(24px); 
+            border: 1px solid var(--card-border); 
+            border-radius: 40px; 
+            padding: 24px; 
+            max-width: 960px; 
+            width: 100%; 
+            box-shadow: var(--shadow); 
+            animation: cardEntry 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards; 
+            opacity: 0; 
+            transform: scale(var(--ui-scale)); /* يتم تطبيق الحجم المصغر هنا */
+            transform-origin: center center;
+        }
+        @keyframes cardEntry { to { opacity: 1; transform: scale(var(--ui-scale)); } }
 
         /* --- VIDEO --- */
         .video-container { position: relative; width: 100%; border-radius: 24px; overflow: hidden; background: #000; box-shadow: 0 15px 50px rgba(0, 0, 0, 0.6); transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s ease; touch-action: none; cursor: pointer; }
@@ -153,39 +172,18 @@
         .select-custom { width: 100%; padding: 12px 16px; background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--card-border); border-radius: 16px; font-size: 0.9rem; cursor: pointer; outline: none; transition: border 0.3s, box-shadow 0.3s; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23a0a0c0' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; touch-action: manipulation; font-weight: 500; }
         .select-custom:focus { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); }
 
-        /* ====== تحسينات الجوال (Super Compact Mode) ====== */
         @media (max-width: 700px) { 
-            .glass-card { padding: 8px; border-radius: 20px; } 
-            .settings-panel { right: 8px; width: calc(100% - 16px); top: 50px; padding: 12px; } 
-            .settings-trigger { top: 10px; right: 10px; width: 30px; height: 30px; } 
-            .settings-trigger svg { width: 16px; height: 16px; }
-            .play-overlay-large .big-btn { width: 48px; height: 48px; } 
-            .play-overlay-large .big-btn svg { width: 24px; height: 24px; } 
-            
-            /* تصغير الأزرار والمسافات إلى أقصى حد */
-            .controls-row { font-size: 0.6rem; gap: 2px; } 
-            .controls-left, .controls-right { gap: 2px; }
-            
-            .ctrl-btn { width: 28px; height: 28px; } 
-            .ctrl-btn svg { width: 14px; height: 14px; } 
-            
-            /* تصغير شريط الصوت */
-            input[type="range"].custom-vol { width: 40px; height: 3px; } 
-            input[type="range"].custom-vol::-webkit-slider-thumb { width: 12px; height: 12px; }
-
-            /* تصغير شريط التقدم */
-            .timeline-wrapper { height: 3px; border-radius: 4px; }
-            .timeline-knob { width: 10px; height: 10px; top: -4px; right: -5px; }
-
-            /* تصغير الخطوط والترجمة */
-            .subtitle-text { font-size: 0.8rem; padding: 4px 10px; } 
-            #timeDisplay { font-size: 0.6rem; }
-            .ctrl-btn.loop-btn { font-size: 0.6rem; }
-
-            .subtitle-overlay { bottom: 60px; } 
-            
-            /* تقليل حشو لوحة التحكم السفلية */
-            .controls-overlay { padding: 6px 10px; }
+            .glass-card { padding: 16px; border-radius: 28px; } 
+            .settings-panel { right: 10px; width: calc(100% - 20px); top: 70px; padding: 18px; } 
+            .settings-trigger { top: 16px; right: 16px; width: 44px; height: 44px; } 
+            .play-overlay-large .big-btn { width: 70px; height: 70px; } 
+            .play-overlay-large .big-btn svg { width: 32px; height: 32px; } 
+            .controls-row { font-size: 0.7rem; } 
+            input[type="range"].custom-vol { width: 40px; } 
+            .ctrl-btn { width: 40px; height: 40px; } 
+            .ctrl-btn svg { width: 18px; height: 18px; } 
+            .subtitle-text { font-size: 1rem; padding: 8px 16px; } 
+            .subtitle-overlay { bottom: 70px; } 
         }
     </style>
 </head>
@@ -259,7 +257,7 @@
 
     <canvas id="colorCanvas" style="display:none;"></canvas>
 
-    <!-- ================= BLANK CANVAS: ALL VISUAL OVERLAYS REMOVED ================= -->
+    <!-- ================= BLANK CANVAS ================= -->
     <script>
         const canvas = document.getElementById('simCanvas');
         const ctx = canvas.getContext('2d');
@@ -283,7 +281,7 @@
         animate();
     </script>
 
-    <!-- ================= NATIVE VIDEO CONTROLLER + TOP 10 LANGUAGES (HARDCODED) ================= -->
+    <!-- ================= NATIVE VIDEO CONTROLLER ================= -->
     <script>
         (function() {
             const video = document.getElementById('myVideo');
@@ -325,7 +323,7 @@
             let captionsEnabled = false;
 
             // ===================================================================
-            //  TOP 10 LANGUAGES - HARDCODED DIRECTLY IN THE SCRIPT
+            //  اللغات (تمت إزالة شريط التمرير)
             // ===================================================================
             const i18n = {
                 "en": { "settings": "⚙️ Hyper-Controls", "lang": "🌐 Language", "theme": "🌗 Theme", "sync": "🎨 Color Sync", "captions": "📜 Captions", "scale": "📐 Display Scale", "speed": "⏩ Speed", "error_head": "Failed to load video.", "error_sub": "Please ensure <strong>video.mp4</strong> is in the same folder." },
@@ -341,16 +339,9 @@
             };
 
             const TOP_10_LANGS = [
-                ["en", "English"],
-                ["es", "Español"],
-                ["fr", "Français"],
-                ["de", "Deutsch"],
-                ["it", "Italiano"],
-                ["pt", "Português"],
-                ["ru", "Русский"],
-                ["zh", "中文"],
-                ["ja", "日本語"],
-                ["ar", "العربية"]
+                ["en", "English"], ["es", "Español"], ["fr", "Français"],
+                ["de", "Deutsch"], ["it", "Italiano"], ["pt", "Português"],
+                ["ru", "Русский"], ["zh", "中文"], ["ja", "日本語"], ["ar", "العربية"]
             ];
 
             function populateLanguageSelect() {
@@ -394,7 +385,7 @@
             });
 
             // ===================================================================
-            //  [FEATURE]: RESTORE LAST POSITION (Auto-Resume)
+            //  RESTORE LAST POSITION
             // ===================================================================
             video.addEventListener('loadedmetadata', function() {
                 const savedTime = localStorage.getItem('videoProgress');
@@ -410,7 +401,7 @@
             });
 
             // ===================================================================
-            //  [FEATURE]: A-B REPEAT LOOP
+            //  A-B REPEAT LOOP
             // ===================================================================
             let loopStart = null;
             let loopEnd = null;
@@ -674,7 +665,7 @@
                 setTimeout(() => controlsOverlay.classList.remove('active-controls'), 4000);
             });
 
-            console.log('✅ NATIVE VIDEO ENGINE LOADED - TOP 10 LANGUAGES HARDCODED');
+            console.log('✅ NATIVE VIDEO ENGINE LOADED - SIZE FIXED AT 50%');
         })();
     </script>
 </body>
