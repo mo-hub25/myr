@@ -21,10 +21,14 @@
             --knob-color: #ff7b00;
             --icon-fill: #f0f0ff;
 
-            /* ===== 6 المتغيرات (قيم افتراضية للوضع العمودي) ===== */
+            /* ===== 6 المتغيرات الأصلية ===== */
             --video-scale: 0.75;     /* var 1: حجم الفيديو (عمودي) */
             --settings-scale: 0.75;   /* var 3: حجم الإعدادات (عمودي) */
-            --controls-scale: 0.6;  /* var 5: حجم الأزرار (عمودي) */
+            --controls-scale: 0.75;  /* var 5: حجم الأزرار (عمودي) */
+
+            /* ===== متغيرات الحاوية الزجاجية (جديدة) ===== */
+            --glass-scale-portrait: 0.6;  /* var 7: حجم الحاوية الزجاجية (عمودي) - 60% */
+            --glass-scale-landscape: 0.6; /* var 8: حجم الحاوية الزجاجية (أفقي) - 60% */
         }
 
         /* ===== قيم الوضع الأفقي (Landscape) ===== */
@@ -32,7 +36,8 @@
             :root {
                 --video-scale: 0.5;     /* var 2: حجم الفيديو (أفقي) */
                 --settings-scale: 0.8;   /* var 4: حجم الإعدادات (أفقي) */
-                --controls-scale: 0.7;  /* var 6: حجم الأزرار (أفقي) */
+                --controls-scale: 0.5;  /* var 6: حجم الأزرار (أفقي) */
+                --glass-scale-landscape: 0.6; /* ثابت على 60% كما طلبت */
             }
         }
 
@@ -91,7 +96,7 @@
             background: transparent; 
         }
 
-        /* ===== MAIN CARD ===== */
+        /* ===== MAIN CARD (الحاوية الزجاجية) ===== */
         .glass-card { 
             position: relative; 
             z-index: 1; 
@@ -106,11 +111,21 @@
             box-shadow: var(--shadow); 
             animation: cardEntry 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards; 
             opacity: 0; 
-            transform: translateY(40px);
+            /* تطبيق متغير الحجم حسب الوضعية (عمودي أو أفقي) */
+            transform: scale(var(--glass-scale-portrait));
+            transform-origin: center center;
         }
-        @keyframes cardEntry { to { opacity: 1; transform: translateY(0); } }
+        @keyframes cardEntry { to { opacity: 1; transform: scale(var(--glass-scale-portrait)); } }
 
-        /* --- VIDEO & CONTAINER (متغير الحجم 1 و 2) --- */
+        /* تعديل الحجم عند الوضع الأفقي */
+        @media (orientation: landscape) {
+            .glass-card {
+                transform: scale(var(--glass-scale-landscape)) !important;
+            }
+            @keyframes cardEntry { to { opacity: 1; transform: scale(var(--glass-scale-landscape)); } }
+        }
+
+        /* --- VIDEO & CONTAINER --- */
         .video-container { 
             position: relative; 
             width: 100%; 
@@ -121,7 +136,6 @@
             transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s ease; 
             touch-action: none; 
             cursor: pointer; 
-            /* تطبيق المتغير هنا */
             transform: scale(var(--video-scale));
             transform-origin: center center;
         }
@@ -154,7 +168,7 @@
         .timeline-knob { position: absolute; right: -8px; top: -5px; width: 16px; height: 16px; background: #ffffff; border-radius: 50%; box-shadow: 0 0 20px var(--accent-glow), 0 0 5px var(--accent); opacity: 0; transition: opacity 0.2s; pointer-events: none; }
         .timeline-wrapper:hover .timeline-knob, .timeline-wrapper:active .timeline-knob { opacity: 1; }
 
-        /* --- CONTROLS ROW (متغير الحجم 5 و 6) --- */
+        /* --- CONTROLS ROW --- */
         .controls-row { 
             display: flex; 
             align-items: center; 
@@ -165,7 +179,6 @@
             font-weight: 500; 
             pointer-events: auto; 
             flex-wrap: wrap; 
-            /* تطبيق المتغير هنا */
             transform: scale(var(--controls-scale));
             transform-origin: bottom center;
         }
@@ -184,7 +197,7 @@
         .play-overlay-large .big-btn:active { transform: scale(0.9); }
         .play-overlay-large .big-btn svg { width: 40px; height: 40px; fill: #fff; margin-left: 5px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.4)); }
 
-        /* --- SETTINGS PANEL (متغير الحجم 3 و 4) --- */
+        /* --- SETTINGS PANEL --- */
         .settings-trigger { position: absolute; top: 20px; right: 20px; width: 48px; height: 48px; background: var(--card-bg); backdrop-filter: blur(12px); border: 1px solid var(--card-border); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-primary); transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s; box-shadow: 0 4px 20px rgba(0,0,0,0.2); touch-action: manipulation; z-index: 11; }
         .settings-trigger:active { transform: rotate(90deg) scale(0.95); }
         .settings-trigger svg { width: 26px; height: 26px; fill: var(--icon-fill); transition: fill 0.3s; }
@@ -204,7 +217,6 @@
             box-shadow: var(--shadow); 
             opacity: 0; 
             visibility: hidden; 
-            /* تطبيق المتغير هنا */
             transform: scale(var(--settings-scale));
             transform-origin: top right;
             transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1); 
@@ -660,7 +672,7 @@
                 setTimeout(() => controlsOverlay.classList.remove('active-controls'), 4000);
             });
 
-            console.log('✅ NATIVE VIDEO ENGINE LOADED - 6 VARIABLES SCALING (A-B REMOVED)');
+            console.log('✅ NATIVE VIDEO ENGINE LOADED - GLASS CONTAINER SCALE 60%');
         })();
     </script>
 </body>
