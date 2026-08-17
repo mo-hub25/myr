@@ -5,11 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>practical surgery</title>
     <style>
-        /* ===== ROOT & THEMING & VARIABLES ===== */
+        /* ===== ROOT & THEMING ===== */
         :root {
-            /* القيمة الافتراضية */
-            --ui-scale: 0.6; 
-            
             --bg-primary: #0b0b14;
             --bg-secondary: #16162e;
             --text-primary: #f0f0ff;
@@ -23,19 +20,19 @@
             --slider-fill: #ff7b00;
             --knob-color: #ff7b00;
             --icon-fill: #f0f0ff;
+
+            /* ===== 6 المتغيرات (قيم افتراضية للوضع العمودي) ===== */
+            --video-scale: 0.75;     /* var 1: حجم الفيديو (عمودي) */
+            --settings-scale: 1.0;   /* var 3: حجم الإعدادات (عمودي) */
+            --controls-scale: 0.75;  /* var 5: حجم الأزرار (عمودي) */
         }
 
-        /* ===== متغير الحجم للوضع العمودي (Portrait) ===== */
-        @media (orientation: portrait) {
-            :root {
-                --ui-scale: 0.9; /* 70% - حجم أكبر ليناسب الشاشة الطويلة */
-            }
-        }
-
-        /* ===== متغير الحجم للوضع الأفقي (Landscape) ===== */
+        /* ===== قيم الوضع الأفقي (Landscape) ===== */
         @media (orientation: landscape) {
             :root {
-                --ui-scale: 0.5; /* 50% - الحجم المثالي الذي أعجبك */
+                --video-scale: 0.5;     /* var 2: حجم الفيديو (أفقي) */
+                --settings-scale: 0.8;   /* var 4: حجم الإعدادات (أفقي) */
+                --controls-scale: 0.5;  /* var 6: حجم الأزرار (أفقي) */
             }
         }
 
@@ -109,13 +106,25 @@
             box-shadow: var(--shadow); 
             animation: cardEntry 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards; 
             opacity: 0; 
-            transform: scale(var(--ui-scale)); /* يتم تطبيق الحجم هنا حسب الوضعية */
+            transform: translateY(40px);
+        }
+        @keyframes cardEntry { to { opacity: 1; transform: translateY(0); } }
+
+        /* --- VIDEO & CONTAINER (متغير الحجم 1 و 2) --- */
+        .video-container { 
+            position: relative; 
+            width: 100%; 
+            border-radius: 24px; 
+            overflow: hidden; 
+            background: #000; 
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.6); 
+            transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s ease; 
+            touch-action: none; 
+            cursor: pointer; 
+            /* تطبيق المتغير هنا */
+            transform: scale(var(--video-scale));
             transform-origin: center center;
         }
-        @keyframes cardEntry { to { opacity: 1; transform: scale(var(--ui-scale)); } }
-
-        /* --- VIDEO --- */
-        .video-container { position: relative; width: 100%; border-radius: 24px; overflow: hidden; background: #000; box-shadow: 0 15px 50px rgba(0, 0, 0, 0.6); transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s ease; touch-action: none; cursor: pointer; }
         .video-container video { width: 100%; display: block; background: #000; object-fit: contain; pointer-events: none; }
 
         /* --- Error Message Overlay --- */
@@ -145,17 +154,26 @@
         .timeline-knob { position: absolute; right: -8px; top: -5px; width: 16px; height: 16px; background: #ffffff; border-radius: 50%; box-shadow: 0 0 20px var(--accent-glow), 0 0 5px var(--accent); opacity: 0; transition: opacity 0.2s; pointer-events: none; }
         .timeline-wrapper:hover .timeline-knob, .timeline-wrapper:active .timeline-knob { opacity: 1; }
 
-        .controls-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: white; font-size: 0.8rem; font-weight: 500; pointer-events: auto; flex-wrap: wrap; }
+        /* --- CONTROLS ROW (متغير الحجم 5 و 6) --- */
+        .controls-row { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            gap: 12px; 
+            color: white; 
+            font-size: 0.8rem; 
+            font-weight: 500; 
+            pointer-events: auto; 
+            flex-wrap: wrap; 
+            /* تطبيق المتغير هنا */
+            transform: scale(var(--controls-scale));
+            transform-origin: bottom center;
+        }
         .controls-left, .controls-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
         .ctrl-btn { width: 44px; height: 44px; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1); pointer-events: auto; touch-action: manipulation; flex-shrink: 0; }
         .ctrl-btn:hover, .ctrl-btn:active { transform: scale(1.1); background: rgba(255, 255, 255, 0.25); box-shadow: 0 0 30px var(--accent-glow); }
         .ctrl-btn svg { width: 22px; height: 22px; fill: #fff; filter: drop-shadow(0 0 4px rgba(0,0,0,0.5)); }
-
-        /* A-B Loop Buttons Special Styling */
-        .ctrl-btn.loop-btn { background: rgba(255, 123, 0, 0.15); border-color: rgba(255, 123, 0, 0.3); font-weight: bold; font-size: 0.9rem; color: #fff; }
-        .ctrl-btn.loop-btn.active { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
-        .ctrl-btn.loop-btn span { display: block; }
 
         input[type="range"].custom-vol { -webkit-appearance: none; appearance: none; width: 60px; height: 4px; background: rgba(255, 255, 255, 0.2); border-radius: 4px; outline: none; transition: all 0.2s; touch-action: none; pointer-events: auto; cursor: pointer; }
         input[type="range"].custom-vol::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 14px; height: 14px; background: #ffffff; border-radius: 50%; box-shadow: 0 0 15px var(--accent-glow); cursor: pointer; transition: transform 0.2s; }
@@ -166,13 +184,32 @@
         .play-overlay-large .big-btn:active { transform: scale(0.9); }
         .play-overlay-large .big-btn svg { width: 40px; height: 40px; fill: #fff; margin-left: 5px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.4)); }
 
-        /* --- SETTINGS --- */
+        /* --- SETTINGS PANEL (متغير الحجم 3 و 4) --- */
         .settings-trigger { position: absolute; top: 20px; right: 20px; width: 48px; height: 48px; background: var(--card-bg); backdrop-filter: blur(12px); border: 1px solid var(--card-border); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-primary); transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s; box-shadow: 0 4px 20px rgba(0,0,0,0.2); touch-action: manipulation; z-index: 11; }
         .settings-trigger:active { transform: rotate(90deg) scale(0.95); }
         .settings-trigger svg { width: 26px; height: 26px; fill: var(--icon-fill); transition: fill 0.3s; }
 
-        .settings-panel { position: absolute; top: 80px; right: 20px; z-index: 10; background: var(--card-bg); backdrop-filter: blur(30px); border: 1px solid var(--card-border); border-radius: 28px; padding: 24px; width: 300px; max-width: 90vw; box-shadow: var(--shadow); opacity: 0; visibility: hidden; transform: translateY(-20px) scale(0.95); transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
-        .settings-panel.active { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+        .settings-panel { 
+            position: absolute; 
+            top: 80px; 
+            right: 20px; 
+            z-index: 10; 
+            background: var(--card-bg); 
+            backdrop-filter: blur(30px); 
+            border: 1px solid var(--card-border); 
+            border-radius: 28px; 
+            padding: 24px; 
+            width: 300px; 
+            max-width: 90vw; 
+            box-shadow: var(--shadow); 
+            opacity: 0; 
+            visibility: hidden; 
+            /* تطبيق المتغير هنا */
+            transform: scale(var(--settings-scale));
+            transform-origin: top right;
+            transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1); 
+        }
+        .settings-panel.active { opacity: 1; visibility: visible; transform: scale(var(--settings-scale)); }
         .settings-panel h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; color: var(--text-primary); border-bottom: 1px solid var(--card-border); padding-bottom: 12px; font-weight: 700; }
         .setting-group { margin-bottom: 20px; }
         .setting-group:last-child { margin-bottom: 0; }
@@ -251,11 +288,6 @@
                         <button class="ctrl-btn" id="playBtn"><svg viewBox="0 0 24 24" id="playIcon"><path d="M8 5v14l11-7z"/></svg></button>
                         <span id="timeDisplay">0:00 / 0:00</span>
                         
-                        <!-- A-B Loop Controls -->
-                        <button class="ctrl-btn loop-btn" id="loopA" title="Set Loop Start (A)"><span>A</span></button>
-                        <button class="ctrl-btn loop-btn" id="loopB" title="Set Loop End (B)"><span>B</span></button>
-                        <button class="ctrl-btn loop-btn" id="loopToggle" title="Toggle Loop"><span>🔁</span></button>
-                        
                         <button class="ctrl-btn" id="fullscreenBtn" aria-label="Fullscreen"><svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg></button>
                     </div>
                     <div class="controls-right">
@@ -323,9 +355,6 @@
             const captionsToggle = document.getElementById('captionsToggle');
 
             const langSelect = document.getElementById('langSelect');
-            const loopA = document.getElementById('loopA');
-            const loopB = document.getElementById('loopB');
-            const loopToggle = document.getElementById('loopToggle');
 
             const subtitleOverlay = document.getElementById('subtitleOverlay');
             const subtitleText = document.getElementById('subtitleText');
@@ -411,54 +440,6 @@
             video.addEventListener('timeupdate', function() {
                 if (video.duration && !isNaN(video.duration)) {
                     localStorage.setItem('videoProgress', video.currentTime);
-                }
-            });
-
-            // ===================================================================
-            //  A-B REPEAT LOOP
-            // ===================================================================
-            let loopStart = null;
-            let loopEnd = null;
-            let loopEnabled = false;
-
-            loopA.addEventListener('click', () => {
-                loopStart = video.currentTime;
-                loopA.classList.add('active');
-                if(!loopEnd) loopB.classList.remove('active');
-                loopToggle.classList.add('active');
-                loopEnabled = true;
-            });
-
-            loopB.addEventListener('click', () => {
-                loopEnd = video.currentTime;
-                loopB.classList.add('active');
-                if(!loopStart) loopA.classList.remove('active');
-                loopToggle.classList.add('active');
-                loopEnabled = true;
-            });
-
-            loopToggle.addEventListener('click', () => {
-                if (loopStart !== null && loopEnd !== null) {
-                    loopEnabled = !loopEnabled;
-                    loopToggle.classList.toggle('active');
-                    if (!loopEnabled) {
-                        loopA.classList.remove('active');
-                        loopB.classList.remove('active');
-                    } else {
-                        loopA.classList.add('active');
-                        loopB.classList.add('active');
-                    }
-                } else {
-                    loopEnabled = !loopEnabled;
-                    loopToggle.classList.toggle('active');
-                }
-            });
-
-            video.addEventListener('timeupdate', () => {
-                if (loopEnabled && loopStart !== null && loopEnd !== null) {
-                    if (video.currentTime >= loopEnd) {
-                        video.currentTime = loopStart;
-                    }
                 }
             });
 
@@ -679,7 +660,7 @@
                 setTimeout(() => controlsOverlay.classList.remove('active-controls'), 4000);
             });
 
-            console.log('✅ NATIVE VIDEO ENGINE LOADED - LANDSCAPE/PORTRAIT SCALING ADDED');
+            console.log('✅ NATIVE VIDEO ENGINE LOADED - 6 VARIABLES SCALING (A-B REMOVED)');
         })();
     </script>
 </body>
